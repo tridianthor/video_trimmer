@@ -69,17 +69,13 @@ class _VideoViewerState extends State<VideoViewer> {
         ? Container()
         : Padding(
             padding: const EdgeInsets.all(0.0),
-            child: Center(
-              child: AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
+            child: SizedBox.expand(
+              child: FittedBox(
+                fit: BoxFit.cover,
                 child: _controller.value.isInitialized
-                    ? Container(
-                        foregroundDecoration: BoxDecoration(
-                          border: Border.all(
-                            width: widget.borderWidth,
-                            color: widget.borderColor,
-                          ),
-                        ),
+                    ? SizedBox(
+                        width: _controller.value.size?.width ?? 0,
+                        height: _controller.value.size?.height ?? 0,
                         child: VideoPlayer(_controller),
                       )
                     : Container(
