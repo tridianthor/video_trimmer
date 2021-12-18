@@ -299,10 +299,6 @@ class Trimmer {
     }
   }
 
-  setMuteStatus(bool muteStatus) async {
-    await videoPlayerController!.setVolume(muteStatus?0.0:100.0);
-  }
-
   /// Clean up
   void dispose() {
     _controller.close();
