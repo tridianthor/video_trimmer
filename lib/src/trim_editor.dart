@@ -194,6 +194,7 @@ class TrimEditor extends StatefulWidget {
     this.onChangeStart,
     this.onChangeEnd,
     this.onChangePlaybackState,
+    this.showSelectedTime = false
   });
 
   @override
@@ -499,10 +500,11 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
                               .split('.')[0],
                           style: widget.durationTextStyle,
                         ),
-                        Text(
-                          "selected ${_selectedDuration.toInt()}s",
-                          style: widget.durationTextStyle,
-                        ),
+                        if(widget.showSelectedTime)
+                          Text(
+                            "selected ${_selectedDuration.toInt()}s",
+                            style: widget.durationTextStyle,
+                          ),
                         Text(
                           Duration(milliseconds: _videoEndPos.toInt())
                               .toString()

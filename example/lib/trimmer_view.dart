@@ -114,6 +114,7 @@ class _TrimmerViewState extends State<TrimmerView> {
                           _isPlaying = value;
                         });
                       },
+                      showSelectedTime: false,
                     ),
                   ),
                   TextButton(
