@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -99,6 +100,9 @@ class TrimEditor extends StatefulWidget {
   /// the center, will move the whole frame if [maxVideoLength] is inferior to the
   /// total duration of the video.
   final int sideTapSize;
+
+  ///whether to show the selected time or not.
+  final bool showSelectedTime;
 
   /// Widget for displaying the video trimmer.
   ///
@@ -216,6 +220,8 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
 
   int _numberOfThumbnails = 0;
 
+  late double _selectedDuration;
+
   late double _circleSize;
 
   double? fraction;
@@ -256,8 +262,8 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
           if (widget.maxVideoLength > Duration(milliseconds: 0) &&
               widget.maxVideoLength < totalDuration) {
             if (widget.maxVideoLength < totalDuration) {
-              fraction = widget.maxVideoLength.inMilliseconds /
-                  totalDuration.inMilliseconds;
+              fraction =
+                  widget.maxVideoLength.inMilliseconds / totalDuration.inMilliseconds;
 
               maxLengthPixels = _thumbnailViewerW * fraction!;
             }
@@ -280,8 +286,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
           _linearTween = Tween(begin: _startPos.dx, end: _endPos.dx);
           _animationController = AnimationController(
             vsync: this,
-            duration:
-                Duration(milliseconds: (_videoEndPos - _videoStartPos).toInt()),
+            duration: Duration(milliseconds: (_videoEndPos - _videoStartPos).toInt()),
           );
 
           _scrubberAnimation = _linearTween.animate(_animationController!)
@@ -304,6 +309,10 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
     _numberOfThumbnails = widget.viewerWidth ~/ _thumbnailViewerH;
 
     _thumbnailViewerW = _numberOfThumbnails * _thumbnailViewerH;
+
+    setState(() {
+      _selectedDuration = widget.maxVideoLength.inSeconds.toDouble();
+    });
   }
 
   Future<void> _initializeVideoController() async {
@@ -314,8 +323,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
         if (isPlaying) {
           widget.onChangePlaybackState!(true);
           setState(() {
-            _currentPosition =
-                videoPlayerController.value.position.inMilliseconds;
+            _currentPosition = videoPlayerController.value.position.inMilliseconds;
 
             if (_currentPosition > _videoEndPos.toInt()) {
               videoPlayerController.pause();
@@ -331,8 +339,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
         } else {
           if (videoPlayerController.value.isInitialized) {
             if (_animationController != null) {
-              if ((_scrubberAnimation?.value ?? 0).toInt() ==
-                  (_endPos.dx).toInt()) {
+              if ((_scrubberAnimation?.value ?? 0).toInt() == (_endPos.dx).toInt()) {
                 _animationController!.reset();
               }
               _animationController!.stop();
@@ -370,8 +377,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
 
     //First we determine whether the dragging motion should be allowed. The allowed
     //zone is widget.sideTapSize (left) + frame (center) + widget.sideTapSize (right)
-    if (startDifference <= widget.sideTapSize &&
-        endDifference >= -widget.sideTapSize) {
+    if (startDifference <= widget.sideTapSize && endDifference >= -widget.sideTapSize) {
       _allowDrag = true;
     } else {
       print("Dragging is outside of frame, ignoring gesture...");
@@ -426,6 +432,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
   void _onStartDragged() {
     _startFraction = (_startPos.dx / _thumbnailViewerW);
     _videoStartPos = _videoDuration * _startFraction;
+    _selectedDuration = ((_videoEndPos - _videoStartPos) / 1000).roundToDouble();
     widget.onChangeStart!(_videoStartPos);
     _linearTween.begin = _startPos.dx;
     _animationController!.duration =
@@ -436,6 +443,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
   void _onEndDragged() {
     _endFraction = _endPos.dx / _thumbnailViewerW;
     _videoEndPos = _videoDuration * _endFraction;
+    _selectedDuration = ((_videoEndPos - _videoStartPos) / 1000).roundToDouble();
     widget.onChangeEnd!(_videoEndPos);
     _linearTween.end = _endPos.dx;
     _animationController!.duration =
@@ -448,11 +456,9 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
     setState(() {
       _circleSize = widget.circleSize;
       if (_dragType == EditorDragType.right) {
-        videoPlayerController
-            .seekTo(Duration(milliseconds: _videoEndPos.toInt()));
+        videoPlayerController.seekTo(Duration(milliseconds: _videoEndPos.toInt()));
       } else {
-        videoPlayerController
-            .seekTo(Duration(milliseconds: _videoStartPos.toInt()));
+        videoPlayerController.seekTo(Duration(milliseconds: _videoStartPos.toInt()));
       }
     });
   }
@@ -491,6 +497,10 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
                           Duration(milliseconds: _videoStartPos.toInt())
                               .toString()
                               .split('.')[0],
+                          style: widget.durationTextStyle,
+                        ),
+                        Text(
+                          "selected ${_selectedDuration.toInt()}s",
                           style: widget.durationTextStyle,
                         ),
                         Text(
