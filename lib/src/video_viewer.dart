@@ -44,7 +44,7 @@ class VideoViewer extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _VideoViewerState createState() => _VideoViewerState();
+  State<VideoViewer> createState() => _VideoViewerState();
 }
 
 class _VideoViewerState extends State<VideoViewer> {
@@ -66,28 +66,30 @@ class _VideoViewerState extends State<VideoViewer> {
 
   @override
   Widget build(BuildContext context) {
-    final _controller = videoPlayerController;
-    return _controller == null
+    final controller = videoPlayerController;
+    return controller == null
         ? Container()
         : Padding(
             padding: const EdgeInsets.all(0.0),
             child: Center(
-              child: _controller.value.isInitialized
-                  ? SizedBox.expand(
-                      child: FittedBox(
-                        fit: BoxFit.cover,
-                        child: SizedBox(
-                          width: _controller.value.size.width,
-                          height: _controller.value.size.height,
-                          child: VideoPlayer(_controller),
+              child: AspectRatio(
+                aspectRatio: controller.value.aspectRatio,
+                child: controller.value.isInitialized
+                    ? Container(
+                        foregroundDecoration: BoxDecoration(
+                          border: Border.all(
+                            width: widget.borderWidth,
+                            color: widget.borderColor,
+                          ),
+                        ),
+                        child: VideoPlayer(controller),
+                      )
+                    : const Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
                         ),
                       ),
-                    )
-                  : const Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
+              ),
             ),
           );
   }
