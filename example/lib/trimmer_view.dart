@@ -21,6 +21,7 @@ class _TrimmerViewState extends State<TrimmerView> {
 
   bool _isPlaying = false;
   bool _progressVisibility = false;
+  bool isMuted = false;
 
   @override
   void initState() {
@@ -83,9 +84,26 @@ class _TrimmerViewState extends State<TrimmerView> {
                     backgroundColor: Colors.red,
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: _progressVisibility ? null : () => _saveVideo(),
-                  child: const Text("SAVE"),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ElevatedButton(
+                      onPressed:
+                          _progressVisibility ? null : () => _saveVideo(),
+                      child: const Text("SAVE"),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _trimmer.setMuteStatus(!isMuted);
+                        });
+                      },
+                      child: const Text("MUTE"),
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: VideoViewer(trimmer: _trimmer),
