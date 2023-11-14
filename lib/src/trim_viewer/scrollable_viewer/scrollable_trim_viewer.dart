@@ -205,7 +205,7 @@ class _ScrollableTrimViewerState extends State<ScrollableTrimViewer>
 
   void startScrolling(bool isTowardsEnd) {
     _scrollingTimer =
-        Timer.periodic(const Duration(milliseconds: 300), (timer) {
+        Timer.periodic(const Duration(milliseconds: 100), (timer) {
       setState(() {
         final midPoint = (_endPos.dx - _startPos.dx) / 2;
         var speedMultiplier = 1;
