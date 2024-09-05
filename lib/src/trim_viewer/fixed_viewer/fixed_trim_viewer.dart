@@ -60,6 +60,12 @@ class FixedTrimViewer extends StatefulWidget {
   /// playing, otherwise paused.
   final Function(bool isPlaying)? onChangePlaybackState;
 
+  /// on drag callback
+  final Function()? onDragStart;
+
+  /// on drag callback
+  final Function()? onDragEnd;
+
   /// Properties for customizing the trim editor.
   final TrimEditorProperties editorProperties;
 
@@ -125,6 +131,8 @@ class FixedTrimViewer extends StatefulWidget {
     this.onChangeStart,
     this.onChangeEnd,
     this.onChangePlaybackState,
+    this.onDragStart,
+    this.onDragEnd,
     this.editorProperties = const TrimEditorProperties(),
     this.areaProperties = const FixedTrimAreaProperties(),
   });
@@ -309,6 +317,10 @@ class _FixedTrimViewerState extends State<FixedTrimViewer>
     debugPrint((_startPos.dx - details.localPosition.dx).abs().toString());
     debugPrint((_endPos.dx - details.localPosition.dx).abs().toString());
 
+    if(widget.onDragStart != null){
+      widget.onDragStart!();
+    }
+
     final startDifference = _startPos.dx - details.localPosition.dx;
     final endDifference = _endPos.dx - details.localPosition.dx;
 
@@ -393,6 +405,9 @@ class _FixedTrimViewerState extends State<FixedTrimViewer>
 
   /// Drag gesture ended, update UI accordingly.
   void _onDragEnd(DragEndDetails details) {
+    if(widget.onDragEnd != null){
+      widget.onDragEnd!();
+    }
     setState(() {
       _startCircleSize = widget.editorProperties.circleSize;
       _endCircleSize = widget.editorProperties.circleSize;

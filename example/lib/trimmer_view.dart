@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:example/preview.dart';
@@ -130,6 +131,12 @@ class _TrimmerViewState extends State<TrimmerView> {
                       onChangeEnd: (value) => _endValue = value,
                       onChangePlaybackState: (value) =>
                           setState(() => _isPlaying = value),
+                      onDragStart: () {
+                        log("on drag start from trimmer view host page");
+                      },
+                      onDragEnd: () {
+                        log("on drag end from trimmer view host page");
+                      },
                     ),
                   ),
                 ),

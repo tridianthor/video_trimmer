@@ -62,6 +62,12 @@ class ScrollableTrimViewer extends StatefulWidget {
   /// playing, otherwise paused.
   final Function(bool isPlaying)? onChangePlaybackState;
 
+  /// on drag callback
+  final Function()? onDragStart;
+
+  /// on drag callback
+  final Function()? onDragEnd;
+
   /// This is the fraction of padding present beside the trimmer editor,
   /// calculated on the `maxVideoLength` value.
   final double paddingFraction;
@@ -131,6 +137,8 @@ class ScrollableTrimViewer extends StatefulWidget {
     this.onChangeStart,
     this.onChangeEnd,
     this.onChangePlaybackState,
+    this.onDragStart,
+    this.onDragEnd,
     this.paddingFraction = 0.2,
     this.editorProperties = const TrimEditorProperties(),
     this.areaProperties = const TrimAreaProperties(),
@@ -437,6 +445,10 @@ class _ScrollableTrimViewerState extends State<ScrollableTrimViewer>
     log((_startPos.dx - details.localPosition.dx).abs().toString());
     log((_endPos.dx - details.localPosition.dx).abs().toString());
 
+    if(widget.onDragStart != null){
+      widget.onDragStart!();
+    }
+
     final startDifference = _startPos.dx - details.localPosition.dx;
     final endDifference = _endPos.dx - details.localPosition.dx;
 
@@ -544,6 +556,9 @@ class _ScrollableTrimViewerState extends State<ScrollableTrimViewer>
   /// Drag gesture ended, update UI accordingly.
   void _onDragEnd(DragEndDetails details) {
     log('onDragEnd');
+    if(widget.onDragEnd != null){
+      widget.onDragEnd!();
+    }
     _scrollStartTimer?.cancel();
     _scrollingTimer?.cancel();
     setState(() {

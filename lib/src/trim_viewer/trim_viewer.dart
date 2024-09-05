@@ -76,6 +76,12 @@ class TrimViewer extends StatefulWidget {
   /// playing, otherwise paused.
   final Function(bool isPlaying)? onChangePlaybackState;
 
+  /// on drag callback
+  final Function()? onDragStart;
+
+  /// on drag callback
+  final Function()? onDragEnd;
+
   /// This is the fraction of padding present beside the trimmer editor,
   /// calculated on the `maxVideoLength` value.
   final double paddingFraction;
@@ -180,6 +186,8 @@ class TrimViewer extends StatefulWidget {
     this.onChangeStart,
     this.onChangeEnd,
     this.onChangePlaybackState,
+    this.onDragStart,
+    this.onDragEnd,
     this.paddingFraction = 0.2,
     this.editorProperties = const TrimEditorProperties(),
     this.areaProperties = const TrimAreaProperties(),
@@ -231,6 +239,8 @@ class _TrimViewerState extends State<TrimViewer> with TickerProviderStateMixin {
       onChangeStart: widget.onChangeStart,
       onChangeEnd: widget.onChangeEnd,
       onChangePlaybackState: widget.onChangePlaybackState,
+      onDragStart: widget.onDragStart,
+      onDragEnd: widget.onDragEnd,
       paddingFraction: widget.paddingFraction,
       editorProperties: widget.editorProperties,
       areaProperties: widget.areaProperties,
@@ -252,6 +262,8 @@ class _TrimViewerState extends State<TrimViewer> with TickerProviderStateMixin {
       onChangeStart: widget.onChangeStart,
       onChangeEnd: widget.onChangeEnd,
       onChangePlaybackState: widget.onChangePlaybackState,
+      onDragStart: widget.onDragStart,
+      onDragEnd: widget.onDragEnd,
       editorProperties: widget.editorProperties,
       areaProperties: FixedTrimAreaProperties(
         thumbnailFit: widget.areaProperties.thumbnailFit,
